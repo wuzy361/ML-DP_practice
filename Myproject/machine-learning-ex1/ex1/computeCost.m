@@ -12,7 +12,7 @@ J = 0;
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the cost of a particular choice of theta
 %               You should set J to the cost.
-J = (1/(2*m))*norm(y-X*theta)^2
+J = (1/(2*m))*norm(y-X*theta)^2;
 
 
 % =========================================================================

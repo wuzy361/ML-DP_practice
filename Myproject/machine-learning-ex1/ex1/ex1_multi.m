@@ -94,7 +94,26 @@ figure;
 plot(1:numel(J_history), J_history, '-b', 'LineWidth', 2);
 xlabel('Number of iterations');
 ylabel('Cost J');
+hold on;
 
+theta1 = zeros(3, 1);
+[theta, J_history1] = gradientDescentMulti(X, y, theta1, 0.03, num_iters);
+plot(1:numel(J_history1), J_history1, '-r', 'LineWidth', 2);
+
+theta2 = zeros(3, 1);
+[theta, J_history2] = gradientDescentMulti(X, y, theta2, 0.1, num_iters);
+plot(1:numel(J_history2), J_history2, '-g', 'LineWidth', 2);
+
+
+theta3 = zeros(3, 1);
+[theta, J_history3] = gradientDescentMulti(X, y, theta3, 0.3, num_iters);
+plot(1:numel(J_history3), J_history3, '-c', 'LineWidth', 2);
+
+theta4 = zeros(3, 1);
+[theta, J_history4] = gradientDescentMulti(X, y, theta4, 1, num_iters);
+plot(1:numel(J_history4), J_history4, '-m', 'LineWidth', 2);
+
+legend('0.01','0.03','0.1','0.3')
 % Display gradient descent's result
 fprintf('Theta computed from gradient descent: \n');
 fprintf(' %f \n', theta);
@@ -149,7 +168,8 @@ fprintf('\n');
 
 % Estimate the price of a 1650 sq-ft, 3 br house
 % ====================== YOUR CODE HERE ======================
-price = 0; % You should change this
+em = [1,1650,3];
+price = em *theta ; % You should change this
 
 
 % ============================================================
