@@ -71,6 +71,7 @@ argstr = [argstr, ')'];
 if max(size(length)) == 2, red=length(2); length=length(1); else red=1; end
 S=['Iteration '];
 
+
 i = 0;                                            % zero the run length counter
 ls_failed = 0;                             % no previous line search has failed
 fX = [];
