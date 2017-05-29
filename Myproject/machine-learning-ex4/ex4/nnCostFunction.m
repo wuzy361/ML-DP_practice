@@ -39,6 +39,52 @@ Theta2_grad = zeros(size(Theta2));
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
+X =[ones(size(X,1),1),X];
+hX1 = sigmoid(X*Theta1');
+hX1 = [ones(size(hX1,1),1),hX1];
+hX2 = sigmoid(hX1*Theta2');
+c =[1:num_labels];
+y = (y==c);
+left = sum(sum(-y.*log(hX2)));
+right = sum(sum((1-y).*log(1-hX2)));
+unr = left-right;
+J = 1/m*unr;
+
+reg1 = sum(sum(Theta1(:,2:end).^2));
+reg2 = sum(sum(Theta2(:,2:end).^2));
+reg = lambda*(reg1+reg2)/(2*m);
+
+J = J+reg;
+
+
+
+c=[1:num_labels]';
+d2 = zeros(num_labels,hidden_layer_size+1);
+d1 = zeros(hidden_layer_size,input_layer_size+1);
+for t = 1:m
+  one_y = (y(t)==c);
+  x = X(t,:);
+  z2 = x*Theta1';
+  a2 = sigmoid(z2);
+  a2 = [1 a2];
+  z3 = a2*Theta2';
+  a3 = sigmoid(z3');
+  deta3 = a3 - one_y;
+  %size(Theta2')26*10
+  z2 = [1 z2];
+  deta2 = ((Theta2')*deta3).*sigmoidGradient(z2');%change z2 -> a2
+  deta2 = deta2(2:end);
+  %size(sigmoidGradient(z2))1*25
+  %deta2 = deta2(2:end);
+  d2 = d2 + deta3*a2;
+  d1 = d1 + deta2*x;
+end;
+
+D1 = 1/m*d1;
+D2 = 1/m*d2;
+
+Theta1_grad = D1;
+Theta2_grad = D2;
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -54,6 +100,10 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+
+
+
+  
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
@@ -63,34 +113,7 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
-%fprintf("shape theta1,theta2\n");
-%size(Theta1);
-%size(Theta2);
-X =[ones(size(X,1),1),X];
-hX1 = sigmoid(X*Theta1');
-hX1 = [ones(size(hX1,1),1),hX1];
-hX2 = sigmoid(hX1*Theta2');
-c =[1:num_labels];
-y = (y==c);
-left = sum(sum(-y.*log(hX2)));
-right = sum(sum((1-y).*log(1-hX2)));
-unr = left-right;
-J = 1/m*unr;
 
-%temp1 = Theta1;
-%temp2 = Theta2;
-%temp1(:,1) =0;
-%temp2(:,1) = 0;
-
-%reg1 = norm(temp1)^2;
-%reg2 = norm(temp2)^2;
-%size(Theta1(2:end,:))
-%size(Theta2(2:end,:))
-reg1 = sum(sum(Theta1(:,2:end).^2));
-reg2 = sum(sum(Theta2(:,2:end).^2));
-reg = lambda*(reg1+reg2)/(2*m);
-
-J = J+reg;
 %left = -y
 % -------------------------------------------------------------
 
