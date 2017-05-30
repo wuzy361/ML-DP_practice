@@ -63,8 +63,8 @@ d2 = zeros(num_labels,hidden_layer_size+1);
 d1 = zeros(hidden_layer_size,input_layer_size+1);
 for t = 1:m
   one_y = (y(t)==c);
-  x = X(t,:);
-  z2 = x*Theta1';
+  a1= X(t,:);
+  z2 = a1*Theta1';
   a2 = sigmoid(z2);
   a2 = [1 a2];
   z3 = a2*Theta2';
@@ -77,7 +77,7 @@ for t = 1:m
   %size(sigmoidGradient(z2))1*25
   %deta2 = deta2(2:end);
   d2 = d2 + deta3*a2;
-  d1 = d1 + deta2*x;
+  d1 = d1 + deta2*a1;
 end;
 
 D1 = 1/m*d1;
