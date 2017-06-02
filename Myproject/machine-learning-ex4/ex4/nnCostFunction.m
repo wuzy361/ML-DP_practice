@@ -57,34 +57,6 @@ reg = lambda*(reg1+reg2)/(2*m);
 J = J+reg;
 
 
-
-c=[1:num_labels]';
-d2 = zeros(num_labels,hidden_layer_size+1);
-d1 = zeros(hidden_layer_size,input_layer_size+1);
-for t = 1:m
-  one_y = (y(t)==c);
-  a1= X(t,:);
-  z2 = a1*Theta1';
-  a2 = sigmoid(z2);
-  a2 = [1 a2];
-  z3 = a2*Theta2';
-  a3 = sigmoid(z3');
-  deta3 = a3 - one_y;
-  %size(Theta2')26*10
-  z2 = [1 z2];
-  deta2 = ((Theta2')*deta3).*sigmoidGradient(z2');%change z2 -> a2
-  deta2 = deta2(2:end);
-  %size(sigmoidGradient(z2))1*25
-  %deta2 = deta2(2:end);
-  d2 = d2 + deta3*a2;
-  d1 = d1 + deta2*a1;
-end;
-
-D1 = 1/m*d1;
-D2 = 1/m*d2;
-
-Theta1_grad = D1;
-Theta2_grad = D2;
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -103,6 +75,45 @@ Theta2_grad = D2;
 
 
 
+
+for t = 1:m
+  one_y = y(t,:)';
+  a1= X(t,:);
+  z2 = a1*Theta1';
+  a2 = sigmoid(z2);
+  a2 = [1 a2];
+  z3 = a2*Theta2';
+  a3 = sigmoid(z3');
+  deta3 = a3 - one_y;
+  z2 = [1 z2]; %这里如果是用第二种方法的话就不用这一行;
+  deta2 = Theta2' *deta3.*sigmoidGradient(z2');
+  deta2 = deta2(2:end);
+  
+  
+  Theta2_grad = Theta2_grad + deta3*a2;
+  Theta1_grad = Theta1_grad + deta2*a1 ;
+%------------------------------------------------------------------------------------
+  %对于只有一层隐藏层的神经网络来说
+  %这是第二种方法，跟第一种没有什么本质区别，知识对于deta的定义不同。
+  %第一种方法的deta多乘了sigmoid的导数，后面算梯度就不用乘了。
+  %第二种方法的deta先不乘sigmoid的导数，到后面再乘，两种方法没有本质区别，只是计算的先后顺序不同。
+  
+  %对于多层来说第一种方法是对的，第二种应该是错的。deta之间的关系是非线性的，先线性变换后乘一个f'(x)。
+  %deta2 = ((Theta2')*deta3);
+  %deta2 = deta2(2:end);
+  
+  
+  %Theta2_grad = Theta2_grad + deta3*a2;
+  %Theta1_grad = Theta1_grad + deta2.*sigmoidGradient(z2')*a1 ;  
+%--------------------------------------------------------------------------------------  
+end;
+
+ Theta1_grad = Theta1_grad /m;
+ Theta2_grad = Theta2_grad /m;
+
+ 
+
+
   
 % Part 3: Implement regularization with the cost function and gradients.
 %
@@ -110,11 +121,13 @@ Theta2_grad = D2;
 %               backpropagation. That is, you can compute the gradients for
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
-%
-
-
-
-%left = -y
+%
+ bp_reg1 = lambda/m*Theta1;
+ bp_reg2 = lambda/m*Theta2;
+ bp_reg1(:,1) =0;
+ bp_reg2(:,1) =0;
+ Theta1_grad = Theta1_grad + bp_reg1;
+ Theta2_grad = Theta2_grad + bp_reg2;
 % -------------------------------------------------------------
 
 % =========================================================================
